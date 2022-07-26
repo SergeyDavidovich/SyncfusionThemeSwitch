@@ -1,0 +1,54 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager UrlHelper
+@inject IJSRuntime JSRuntime
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
+@using Microsoft.AspNetCore.WebUtilities
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            @*Theme switcher*@
+            <SfSwitch TChecked="bool" @bind-Checked="@isChecked" ValueChange="@((args)=>ToggleTheme(args))"
+                      OnLabel="Light" OffLabel="Dark"></SfSwitch>
+        </div>
+        <CascadingValue Value="theme">
+            <article class="content px-4" style="width:70%; margin-right:auto; margin-left:auto">
+                @Body
+            </article>
+        </CascadingValue>
+    </main>
+</div>
+
+@code {
+
+    private bool isChecked = true;
+    private Theme theme=new();
+
+    protected override void OnInitialized()
+    {
+        if (isChecked)
+            JSRuntime.InvokeAsync<object>("setTheme", "material");
+        else
+            JSRuntime.InvokeAsync<object>("setTheme", "material-dark");
+    }
+    private void ToggleTheme(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool> args)
+    {
+        if (args.Checked)
+        {
+            JSRuntime.InvokeAsync<object>("setTheme", "material");
+            theme = Theme.Material;
+        }
+        else
+        {
+            JSRuntime.InvokeAsync<object>("setTheme", "material-dark");
+            theme = Theme.MaterialDark;
+        }
+    }
+}
+
+
